@@ -37,9 +37,9 @@
       </categories>
       <tags>
         <tag>css</tag>
-        <tag>animation</tag>
         <tag>transform</tag>
         <tag>transation</tag>
+        <tag>animation</tag>
         <tag>浏览器渲染</tag>
       </tags>
   </entry>
@@ -65,8 +65,8 @@
       </categories>
       <tags>
         <tag>css</tag>
-        <tag>cubic-bezier</tag>
         <tag>animation</tag>
+        <tag>cubic-bezier</tag>
       </tags>
   </entry>
   <entry>
@@ -205,8 +205,8 @@
       </categories>
       <tags>
         <tag>译文</tag>
-        <tag>Web Dedign</tag>
         <tag>Web Development</tag>
+        <tag>Web Dedign</tag>
         <tag>Websites</tag>
       </tags>
   </entry>
