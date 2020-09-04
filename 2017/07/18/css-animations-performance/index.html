@@ -73,7 +73,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="css,transform,transation,animation,浏览器渲染," />
+  <meta name="keywords" content="css,animation,transform,transation,浏览器渲染," />
 
 
 
@@ -92,7 +92,7 @@
 
 
 <meta name="description" content="前言在现代浏览器中，渲染页面所要负责的线程主要有两个：主线程和排版线程。 主线程 运行 JS 计算 HTML 元素的 CSS 样式 布局页面 把页面元素绘制成一个或多个位图 把这些位图移交给排版线程  在浏览器开始渲染页面，或者长时间执行某个 JS 时，主线程会一直在忙碌状态，此时对于用户的任何输入或是操作都不会有所响应。 排版线程 通过 GPU 渲染位图，并显示在屏幕上 向主线程请求更新位图的可">
-<meta name="keywords" content="css,transform,transation,animation,浏览器渲染">
+<meta name="keywords" content="css,animation,transform,transation,浏览器渲染">
 <meta property="og:type" content="article">
 <meta property="og:title" content="实用的 CSS — 动画性能对比">
 <meta property="og:url" content="http://joveyzheng.com/2017/07/18/css-animations-performance/index.html">
@@ -463,7 +463,7 @@
 </ul>
 <p>排版线程对于用户的操作保持快速的响应，普遍的效率时每秒 60 帧的速度去刷新显示。</p>
 <h1 id="Transtion"><a href="#Transtion" class="headerlink" title="Transtion"></a>Transtion</h1><p>下面我们在网页中实现一个元素的高度变化的动画，鼠标悬浮在元素上动画启动，直至完成：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">#foo &#123;</span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: height 1s linear;</span><br><span class="line">&#125;</span><br><span class="line">#foo:hover &#123;</span><br><span class="line">  height: 200px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"foo"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-id">#foo</span> &#123;</span></span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: height 1s linear;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-id">#foo</span><span class="selector-pseudo">:hover</span> &#123;</span></span><br><span class="line">  height: 200px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"foo"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>通过对上述代码的观察，让我们来了解一下浏览器的两个线程是如何协同工作的：</p>
 <blockquote>
@@ -474,7 +474,7 @@
 <p>对于浏览器而言，由于元素的高度一直在变化，因此这个动画的每一帧中，都需要重新布局 ——&gt; 绘制页面 ——&gt; 将新的位图加载到 GPU 中 ——&gt; 显示。而其中<code>加载到 GPU</code> 是一个相对缓慢的操作。</p>
 <p>同时我们也在通过浏览器去查看元素动画的过程，其实是由略微卡顿的现象的。</p>
 <h1 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h1><p>经过上面的实验，我们对 <code>transition</code> 属性有了比较好的了解；同时我们对上述动画性能也有一个了解。接着我需要在网页中实现一个元素的大小变化动画，鼠标悬浮在元素上动画启动，直至完成：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">#bar &#123;</span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: transform 1s linear;</span><br><span class="line">&#125;</span><br><span class="line">#bar:hover &#123;</span><br><span class="line">  transform: scale(2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"bar"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-id">#bar</span> &#123;</span></span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: transform 1s linear;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-id">#bar</span><span class="selector-pseudo">:hover</span> &#123;</span></span><br><span class="line">  transform: scale(2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"bar"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>完成上述实验，再让我们来看看两个线程工作的过程：</p>
 <p><img src="/static/images/animations-performance-transform.png" alt="animations-performance-transform"></p>
 <p>由此我们可以看到，两个线程来回切换的情况并不多，橘黄色部分出现的次数也较少，蓝色部分居绝大部分，这意味着这个动画效果相较于上面的要流畅很多。</p>
@@ -534,11 +534,11 @@
           
             <a href="/tags/css/" rel="tag"># css</a>
           
+            <a href="/tags/animation/" rel="tag"># animation</a>
+          
             <a href="/tags/transform/" rel="tag"># transform</a>
           
             <a href="/tags/transation/" rel="tag"># transation</a>
-          
-            <a href="/tags/animation/" rel="tag"># animation</a>
           
             <a href="/tags/浏览器渲染/" rel="tag"># 浏览器渲染</a>
           
@@ -682,7 +682,7 @@
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">59</span>
+                <span class="site-state-item-count">57</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

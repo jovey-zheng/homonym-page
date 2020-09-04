@@ -83,9 +83,9 @@
     
       <category term="Vue" scheme="http://joveyzheng.com/tags/Vue/"/>
     
-      <category term="核心系列" scheme="http://joveyzheng.com/tags/%E6%A0%B8%E5%BF%83%E7%B3%BB%E5%88%97/"/>
-    
       <category term="Vue.js" scheme="http://joveyzheng.com/tags/Vue-js/"/>
+    
+      <category term="核心系列" scheme="http://joveyzheng.com/tags/%E6%A0%B8%E5%BF%83%E7%B3%BB%E5%88%97/"/>
     
       <category term="编译" scheme="http://joveyzheng.com/tags/%E7%BC%96%E8%AF%91/"/>
     
@@ -156,11 +156,11 @@
     
       <category term="Vue" scheme="http://joveyzheng.com/tags/Vue/"/>
     
+      <category term="Vue.js" scheme="http://joveyzheng.com/tags/Vue-js/"/>
+    
       <category term="核心系列" scheme="http://joveyzheng.com/tags/%E6%A0%B8%E5%BF%83%E7%B3%BB%E5%88%97/"/>
     
       <category term="响应式原理" scheme="http://joveyzheng.com/tags/%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86/"/>
-    
-      <category term="Vue.js" scheme="http://joveyzheng.com/tags/Vue-js/"/>
     
   </entry>
   
@@ -189,7 +189,7 @@
 </ul>
 <p>排版线程对于用户的操作保持快速的响应，普遍的效率时每秒 60 帧的速度去刷新显示。</p>
 <h1 id="Transtion"><a href="#Transtion" class="headerlink" title="Transtion"></a>Transtion</h1><p>下面我们在网页中实现一个元素的高度变化的动画，鼠标悬浮在元素上动画启动，直至完成：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">#foo &#123;</span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: height 1s linear;</span><br><span class="line">&#125;</span><br><span class="line">#foo:hover &#123;</span><br><span class="line">  height: 200px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"foo"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-id">#foo</span> &#123;</span></span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: height 1s linear;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-id">#foo</span><span class="selector-pseudo">:hover</span> &#123;</span></span><br><span class="line">  height: 200px;</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"foo"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <a id="more"></a>
 <p>通过对上述代码的观察，让我们来了解一下浏览器的两个线程是如何协同工作的：</p>
 <blockquote>
@@ -200,7 +200,7 @@
 <p>对于浏览器而言，由于元素的高度一直在变化，因此这个动画的每一帧中，都需要重新布局 ——&gt; 绘制页面 ——&gt; 将新的位图加载到 GPU 中 ——&gt; 显示。而其中<code>加载到 GPU</code> 是一个相对缓慢的操作。</p>
 <p>同时我们也在通过浏览器去查看元素动画的过程，其实是由略微卡顿的现象的。</p>
 <h1 id="Transform"><a href="#Transform" class="headerlink" title="Transform"></a>Transform</h1><p>经过上面的实验，我们对 <code>transition</code> 属性有了比较好的了解；同时我们对上述动画性能也有一个了解。接着我需要在网页中实现一个元素的大小变化动画，鼠标悬浮在元素上动画启动，直至完成：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line">#bar &#123;</span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: transform 1s linear;</span><br><span class="line">&#125;</span><br><span class="line">#bar:hover &#123;</span><br><span class="line">  transform: scale(2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"bar"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="css"><span class="selector-id">#bar</span> &#123;</span></span><br><span class="line">  height: 100px;</span><br><span class="line">  width: 100px;</span><br><span class="line">  background: red;</span><br><span class="line">  transition: transform 1s linear;</span><br><span class="line">&#125;</span><br><span class="line"><span class="css"><span class="selector-id">#bar</span><span class="selector-pseudo">:hover</span> &#123;</span></span><br><span class="line">  transform: scale(2);</span><br><span class="line">&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"bar"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>完成上述实验，再让我们来看看两个线程工作的过程：</p>
 <p><img src="/static/images/animations-performance-transform.png" alt="animations-performance-transform"></p>
 <p>由此我们可以看到，两个线程来回切换的情况并不多，橘黄色部分出现的次数也较少，蓝色部分居绝大部分，这意味着这个动画效果相较于上面的要流畅很多。</p>
@@ -230,7 +230,7 @@
 &lt;/ul&gt;
 &lt;p&gt;排版线程对于用户的操作保持快速的响应，普遍的效率时每秒 60 帧的速度去刷新显示。&lt;/p&gt;
 &lt;h1 id=&quot;Transtion&quot;&gt;&lt;a href=&quot;#Transtion&quot; class=&quot;headerlink&quot; title=&quot;Transtion&quot;&gt;&lt;/a&gt;Transtion&lt;/h1&gt;&lt;p&gt;下面我们在网页中实现一个元素的高度变化的动画，鼠标悬浮在元素上动画启动，直至完成：&lt;/p&gt;
-&lt;figure class=&quot;highlight html&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;style&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#foo &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  height: 100px;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  width: 100px;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  background: red;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  transition: height 1s linear;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;#foo:hover &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  height: 200px;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;style&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;body&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;div&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;id&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;foo&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;div&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;body&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;figure class=&quot;highlight html&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;style&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;css&quot;&gt;&lt;span class=&quot;selector-id&quot;&gt;#foo&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  height: 100px;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  width: 100px;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  background: red;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  transition: height 1s linear;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;css&quot;&gt;&lt;span class=&quot;selector-id&quot;&gt;#foo&lt;/span&gt;&lt;span class=&quot;selector-pseudo&quot;&gt;:hover&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  height: 200px;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;style&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;body&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;  &lt;span class=&quot;tag&quot;&gt;&amp;lt;&lt;span class=&quot;name&quot;&gt;div&lt;/span&gt; &lt;span class=&quot;attr&quot;&gt;id&lt;/span&gt;=&lt;span class=&quot;string&quot;&gt;&quot;foo&quot;&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;div&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;tag&quot;&gt;&amp;lt;/&lt;span class=&quot;name&quot;&gt;body&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
     
     </summary>
     
@@ -239,11 +239,11 @@
     
       <category term="css" scheme="http://joveyzheng.com/tags/css/"/>
     
+      <category term="animation" scheme="http://joveyzheng.com/tags/animation/"/>
+    
       <category term="transform" scheme="http://joveyzheng.com/tags/transform/"/>
     
       <category term="transation" scheme="http://joveyzheng.com/tags/transation/"/>
-    
-      <category term="animation" scheme="http://joveyzheng.com/tags/animation/"/>
     
       <category term="浏览器渲染" scheme="http://joveyzheng.com/tags/%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B8%B2%E6%9F%93/"/>
     
@@ -399,9 +399,9 @@
     
       <category term="css" scheme="http://joveyzheng.com/tags/css/"/>
     
-      <category term="animation" scheme="http://joveyzheng.com/tags/animation/"/>
-    
       <category term="cubic-bezier" scheme="http://joveyzheng.com/tags/cubic-bezier/"/>
+    
+      <category term="animation" scheme="http://joveyzheng.com/tags/animation/"/>
     
   </entry>
   
@@ -1214,9 +1214,9 @@
     
       <category term="译文" scheme="http://joveyzheng.com/tags/%E8%AF%91%E6%96%87/"/>
     
-      <category term="Web Development" scheme="http://joveyzheng.com/tags/Web-Development/"/>
-    
       <category term="Web Dedign" scheme="http://joveyzheng.com/tags/Web-Dedign/"/>
+    
+      <category term="Web Development" scheme="http://joveyzheng.com/tags/Web-Development/"/>
     
       <category term="Websites" scheme="http://joveyzheng.com/tags/Websites/"/>
     
