@@ -1,1 +1,1157 @@
-<!doctype html><html class="theme-next pisces use-motion" lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="google-site-verification" content="hURnC-1VtFyi-v7OYQhy-5eOj-XZW3BAIs6iqzQcQj8"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css"><meta name="keywords" content="译文,React,JavaScript,"><link rel="alternate" href="/atom.xml" title="Jovey's Notes" type="application/atom+xml"><link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico?v=5.1.0"><meta name="description" content="前言React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是"><meta name="keywords" content="译文,React,JavaScript"><meta property="og:type" content="article"><meta property="og:title" content="使用 React 是业务需求，而不是技术需求"><meta property="og:url" content="http://joveyzheng.com/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/index.html"><meta property="og:site_name" content="Jovey&#39;s Notes"><meta property="og:description" content="前言React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是"><meta property="og:image" content="https://cdn-images-1.medium.com/max/800/1*pHvDgaslF8EClCehi6AiMA.png"><meta property="og:updated_time" content="2017-06-15T12:34:50.000Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="使用 React 是业务需求，而不是技术需求"><meta name="twitter:description" content="前言React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是"><meta name="twitter:image" content="https://cdn-images-1.medium.com/max/800/1*pHvDgaslF8EClCehi6AiMA.png"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Pisces",sidebar:{position:"left",display:"post",offset:12,offset_float:0,b2t:!1,scrollpercent:!1},fancybox:!0,motion:!0,duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://joveyzheng.com/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/"><title> 使用 React 是业务需求，而不是技术需求 | Jovey's Notes</title></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><script>!function(e,t,a,n,c,o,s){e.GoogleAnalyticsObject=c,e[c]=e[c]||function(){(e[c].q=e[c].q||[]).push(arguments)},e[c].l=1*new Date,o=t.createElement(a),s=t.getElementsByTagName(a)[0],o.async=1,o.src="https://www.google-analytics.com/analytics.js",s.parentNode.insertBefore(o,s)}(window,document,"script",0,"ga"),ga("create","UA-67800719-1","auto"),ga("send","pageview")</script><script type="text/javascript">var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?9606ab0d78e68177424b20257101463b";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">Jovey's Notes</span><span class="logo-line-after"><i></i></span></a></div><h1 class="site-subtitle" itemprop="description">心有猛虎 细嗅蔷薇</h1></div><div class="site-nav-toggle"> <button><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br> 首页</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br> 分类</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br> 关于</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br> 归档</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br> 标签</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i><br> 站点地图</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br> 搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i></span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"> <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://joveyzheng.com/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="Jovey Zheng"><meta itemprop="description" content=""><meta itemprop="image" content="/static/avatar.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="Jovey's Notes"></span><header class="post-header"><h2 class="post-title" itemprop="name headline"> 使用 React 是业务需求，而不是技术需求</h2><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-12-15T12:23:23+08:00">2015-12-15</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/好文分享/" itemprop="url" rel="index"><span itemprop="name">好文分享</span></a></span></span> <span id="/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/" class="leancloud_visitors" data-flag-title="使用 React 是业务需求，而不是技术需求"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数</span><span class="leancloud-visitors-count"></span></span></div></header><div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是试着去总结以下，起点是为了向所有人说明 React 的疑惑，不仅是开发者。</p><p><strong>总结</strong>：React 是一个为创建可组合的用户界面的库。同比其他类似的库如 Angular、Backbone、Knockout 和 Ember，React 的出现是为了解决业务问题而非技术的。接下来会为你解释 React 的重要性和对开发团队的益处。</p><h1 id="降低风险"><a href="#降低风险" class="headerlink" title="降低风险"></a>降低风险</h1><p><strong>稳定性</strong> —— Facebook 花了很大的精力在 React 上（Newsfeed，Instagram，Messenger，Ads Marketplace 等），并且拥有专职的技术团队来维护这个项目。它的 dog-food 测试和投资都不是现有的任何一个项目能比的。除了 Facebook 内部的工程师，还有一大批 React 的爱好者。随着版本的更迭，目前在 github 上拥有 571 个贡献者（截止到 2015 年 12 月）。</p><p><strong>正在使用 React</strong>：AirBnB，Asana，Atlassian，BBC，Chegg，CloudFlare，CNN.com，Codecademy，Coursera，Craftsy，Dailymotion，Dropbox，Expedia，Facebook，Feedly，Flipboard，HipChat，IMDb，Imgur，Instagram，Khan Academy，KISSmetrics，Mattermark，Minerva Project，Netflix，OkCupid，Rackspace，Rally Software，Ralph Lauren，Reddit，Redfin，Salesforce，Squarespace，The New York Times，Trunk Club，Twitter，Uber，University of Cincinnati，Venmo，WhatsApp，Wired，Wix，WordPress，Yahoo，Zendesk</p><h1 id="开发效率"><a href="#开发效率" class="headerlink" title="开发效率"></a>开发效率</h1><p><strong>强大的路径迁移</strong> —— React 允许开发者可以根据自己的需求将其放到任何一个已经存在的页面上。值得注意的是，React 是需要加载一个运行时的库（React 0.14.0 的大小是 39.4 kb），因此零碎的迁移会导致页面重量的增加，直到旧版本的库被移除才会减少。</p><a id="more"></a><p><strong>默认情况下的性能</strong> —— React 的使用模式，让它很难写出低性能的代码。此外，自从它减少了与 DOM 的直接交互，使得它不仅可以代替现有的一些库（Angular/Backbone/Ember），也不再需要大量像 jQuery 一样的依赖，从而减少整体部署代码大小。</p><p><strong>SEO</strong> —— SEO 是从服务器发送一个已经渲染好的页面到浏览器上。React 在设计时就考虑到了 SEO，它用 Node 可以在客户端或服务端进行渲染。其他工具允许在服务端进行渲染，但需要引入一些不稳定的 hack，同时还需要大量的人员去维护。而 React 有可能简化构建工具和减少维护成本。</p><p><strong>提高了代码的重用</strong> —— React 在提供良好的性能同时还可以管理组件的渲染生命周期，如此一来可以显著地提高开发人员的开发效率。通过可重用组件的创造、分配和使用，使之更简单，这样开发人员就能更好地节省使用和开发通用组件的时间。就如按钮一样的低阶元素和可折叠元素一样的高阶元素。</p><h1 id="提高开发效率"><a href="#提高开发效率" class="headerlink" title="提高开发效率"></a>提高开发效率</h1><p><strong>从混合资源中降低复杂度</strong> —— React 混合了 HTML 和 JavaScript，在此原则下，它们被紧紧地捆在一起，而分离它们是分离技术，这不是关注点。这个概念可以进一步扩展到 CSS，删除 CSS 开发过程中的一连串问题，包括全局命名、作用域/变量的隔离。详细请看：<a href="http://projects.formidablelabs.com/radium/" target="_blank" rel="external">Radium</a> 和 <a href="https://speakerdeck.com/vjeux/react-css-in-js" target="_blank" rel="external">React: CSS in js</a>。</p><p><strong>错误的快速隔离</strong> —— Facebook 提供了一个浏览器的<a href="https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en" target="_blank" rel="external">扩展应用</a>，帮助开发者更好地查看某一 UI 是由哪些 component 和数据组合生成的。详细请看<a href="https://www.youtube.com/watch?v=D-ioDiacTm8" target="_blank" rel="external">这里</a>。</p><p><strong>简洁明了的代码</strong> —— 当前绝大多数的工具，都是以<strong>模型</strong>表示数据和<strong>视图</strong>显示数据结合在一起，从而生成丰富的 UI 交互。通常修改一个模型或视图（例如购物车）就可能在其他视图中触发“级联变化”，同时它依赖的是相同的数据。在一个大型应用中，依赖视图会变得很复杂，而且很难修复那些意想不到的 BUG。但是在 React 中，数据的流向是单向的，因此使得视图更容易理解。下面的图是展示信息的流动。<br><img src="https://cdn-images-1.medium.com/max/800/1*pHvDgaslF8EClCehi6AiMA.png" alt="stream"></p><p><strong>提高了易测性</strong> —— 一个组件，React 的通常做法是抽象数据参数和输出一个没有其他副作用的 DOM。通过移除依赖使用和在 DOM 中创建 state 的 store，使得这些组件拥有更多的原子和可测试性。</p><h1 id="开发团队的效益"><a href="#开发团队的效益" class="headerlink" title="开发团队的效益"></a>开发团队的效益</h1><p><strong>快捷的管理</strong> —— React 的 API 非常小，结合声明性语法和组件化的 UI 元素使新的开发人员能更快地上手 —— 特别是刚毕业的大学生或是不熟悉前端坏境的开发者。</p><h1 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h1><h2 id="Facebook-Ads"><a href="#Facebook-Ads" class="headerlink" title="Facebook Ads"></a><a href="http://5by5.tv/changelog/149" target="_blank" rel="external">Facebook Ads</a></h2><p>“It was extremely difficult to change without causing some side effect or bug somewhere else in the application … When the team rebuilt it in React they found that their rate of new bugs being introduced had gone through the floor”</p><p>-Spencer Ahrens</p><p>“When a bug did come in it was much easier to figure out what was going wrong and make a targeted fix”</p><p>-Spencer Ahrens</p><h2 id="Netflix"><a href="#Netflix" class="headerlink" title="Netflix"></a><a href="http://techblog.netflix.com/2015/01/netflix-likes-react.html" target="_blank" rel="external">Netflix</a></h2><p>“React has exceeded our requirements and enabled us to build a tremendous foundation on which to innovate the Netflix experience”</p><h2 id="Hit-Chat"><a href="#Hit-Chat" class="headerlink" title="Hit Chat"></a><a href="https://developer.atlassian.com/blog/2015/02/rebuilding-hipchat-with-react/" target="_blank" rel="external">Hit Chat</a></h2><p>“The dev speed we’ve gained…proves that we can release new client features faster and with more confidence on this platform than on any native client.”</p><p><a href="https://blog.formidable.com/using-react-is-a-business-decision-not-a-technology-choice-63c4641c5f7#.o7fu0q9m6" target="_blank" rel="external"><strong>原文链接</strong></a></p></div><div></div><div><div style="padding:10px 0;margin:20px auto;width:90%;text-align:center"><div>如果觉得有用，您的支持将鼓励我继续创作！</div> <button id="rewardButton" disable="enable" onclick='var qr=document.getElementById("QR");"none"===qr.style.display?qr.style.display="block":qr.style.display="none"'> <span>赏</span></button><div id="QR" style="display:none"><div id="wechat" style="display:inline-block"> <img id="wechat_qr" src="/static/wechatpay_reward.jpg" alt="Jovey Zheng WeChat Pay"><p>微信打赏</p></div><div id="alipay" style="display:inline-block"> <img id="alipay_qr" src="/static/alipay_reward.jpg" alt="Jovey Zheng Alipay"><p>支付宝打赏</p></div></div></div></div><div></div><footer class="post-footer"><div class="post-tags"> <a href="/tags/译文/" rel="tag"># 译文</a> <a href="/tags/React/" rel="tag"># React</a> <a href="/tags/JavaScript/" rel="tag"># JavaScript</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2015/12/07/best-tutorials-to-learn-reactjs/" rel="next" title="ReactJS 的学习教程"><i class="fa fa-chevron-left"></i> ReactJS 的学习教程</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"> <a href="/2015/12/22/css-facts/" rel="prev" title="CSS 的使用中你可能不知道的 7 件事">CSS 的使用中你可能不知道的 7 件事<i class="fa fa-chevron-right"></i></a></div></div></footer></article><div class="post-spread"><div class="jiathis_style"><a class="jiathis_button_tsina"></a><a class="jiathis_button_tqq"></a><a class="jiathis_button_weixin"></a><a class="jiathis_button_cqq"></a><a class="jiathis_button_douban"></a><a class="jiathis_button_renren"></a><a class="jiathis_button_qzone"></a><a class="jiathis_button_kaixin001"></a><a class="jiathis_button_copy"></a><a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a><a class="jiathis_counter_style"></a></div><script type="text/javascript">var jiathis_config={hideMore:!1}</script><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script></div></div></div><div class="comments" id="comments"></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap"> 文章目录</li><li class="sidebar-nav-overview" data-target="site-overview"> 站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" src="/static/avatar.jpg" alt="Jovey Zheng"><p class="site-author-name" itemprop="name">Jovey Zheng</p><p class="site-description motion-element" itemprop="description"></p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"> <a href="/archives"><span class="site-state-item-count">22</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/index.html"><span class="site-state-item-count">6</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/index.html"><span class="site-state-item-count">52</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/jovey-zheng" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="http://weibo.com/u/1633564683" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i> Weibo</a></span><span class="links-of-author-item"><a href="http://www.jianshu.com/users/9de90a2d9205/latest_articles" target="_blank" title="JianShu"><i class="fa fa-fw fa-heartbeat"></i> JianShu</a></span></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#降低风险"><span class="nav-number">2.</span> <span class="nav-text">降低风险</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开发效率"><span class="nav-number">3.</span> <span class="nav-text">开发效率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提高开发效率"><span class="nav-number">4.</span> <span class="nav-text">提高开发效率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开发团队的效益"><span class="nav-number">5.</span> <span class="nav-text">开发团队的效益</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#案例"><span class="nav-number">6.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Facebook-Ads"><span class="nav-number">6.1.</span> <span class="nav-text">Facebook Ads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netflix"><span class="nav-number">6.2.</span> <span class="nav-text">Netflix</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hit-Chat"><span class="nav-number">6.3.</span> <span class="nav-text">Hit Chat</span></a></li></ol></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2015 - <span itemprop="copyrightYear">2017</span><span class="with-love"><i class="fa fa-leaf"></i></span> <span class="author" itemprop="copyrightHolder">Jovey Zheng</span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script><script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script><script type="text/javascript">function proceedsearch(){$("body").append('<div class="search-popup-overlay local-search-pop-overlay"></div>').css("overflow","hidden"),$(".popup").toggle()}var isfetched=!1,search_path="search.xml";0==search_path.length&&(search_path="search.xml");var path="/"+search_path,searchFunc=function(e,t,a){"use strict";$.ajax({url:e,dataType:"xml",async:!0,success:function(e){isfetched=!0,$(".popup").detach().appendTo(".header-inner");var r=$("entry",e).map(function(){return{title:$("title",this).text(),content:$("content",this).text(),url:$("url",this).text()}}).get(),c=document.getElementById(t),s=document.getElementById(a);c.addEventListener("input",function(){var e=0,t='<ul class="search-result-list">',a=this.value.trim().toLowerCase().split(/[\s\-]+/);s.innerHTML="",this.value.trim().length>1&&r.forEach(function(r){var c=!1,s=r.title.trim().toLowerCase(),o=r.content.trim().replace(/<[^>]+>/g,"").toLowerCase(),n=decodeURIComponent(r.url),i=-1,l=-1,p=-1;if(""!=s&&a.forEach(function(e,t){i=s.indexOf(e),l=o.indexOf(e),(i>=0||l>=0)&&(c=!0,0==t&&(p=l))}),c){e+=1,t+="<li><a href='"+n+"' class='search-result-title'>"+s+"</a>";var h=r.content.trim().replace(/<[^>]+>/g,"");if(p>=0){var u=p-20,d=p+80;u<0&&(u=0),0==u&&(d=50),d>h.length&&(d=h.length);var f=h.substring(u,d);a.forEach(function(e){var t=new RegExp(e,"gi");f=f.replace(t,'<b class="search-keyword">'+e+"</b>")}),t+='<p class="search-result">'+f+"...</p>"}t+="</li>"}}),t+="</ul>",0==e&&(t='<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'),""==a&&(t='<div id="no-result"><i class="fa fa-search fa-5x" /></div>'),s.innerHTML=t}),proceedsearch()}})};$(".popup-trigger").click(function(e){e.stopPropagation(),0==isfetched?searchFunc(path,"local-search-input","local-search-result"):proceedsearch()}),$(".popup-btn-close").click(function(e){$(".popup").hide(),$(".local-search-pop-overlay").remove(),$("body").css("overflow","")}),$(".popup").click(function(e){e.stopPropagation()})</script><script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script><script>AV.initialize("GtpPev7lLD4ut1VecYz2zOcM-gzGzoHsz","YvBv69p7tCHqpVqpaX5uo2Fy")</script><script>function showTime(e){var t=new AV.Query(e),n=[],o=$(".leancloud_visitors");o.each(function(){n.push($(this).attr("id").trim())}),t.containedIn("url",n),t.find().done(function(e){if(0!==e.length){for(c=0;c<e.length;c++){var t=e[c],i=t.get("url"),s=t.get("time"),l=document.getElementById(i);$(l).find(".leancloud-visitors-count").text(s)}for(var c=0;c<n.length;c++){var i=n[c],l=document.getElementById(i),r=$(l).find(".leancloud-visitors-count");""==r.text()&&r.text(0)}}else o.find(".leancloud-visitors-count").text(0)}).fail(function(e,t){console.log("Error: "+t.code+" "+t.message)})}function addCount(e){var t=$(".leancloud_visitors"),n=t.attr("id").trim(),o=t.attr("data-flag-title").trim(),i=new AV.Query(e);i.equalTo("url",n),i.find({success:function(t){if(t.length>0){var i=t[0];i.fetchWhenSave(!0),i.increment("time"),i.save(null,{success:function(e){$(document.getElementById(n)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to save Visitor num, with error message: "+t.message)}})}else{var s=new e,l=new AV.ACL;l.setPublicReadAccess(!0),l.setPublicWriteAccess(!0),s.setACL(l),s.set("title",o),s.set("url",n),s.set("time",1),s.save(null,{success:function(e){$(document.getElementById(n)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to create")}})}},error:function(e){console.log("Error:"+e.code+" "+e.message)}})}$(function(){var e=AV.Object.extend("Counter");1==$(".leancloud_visitors").length?addCount(e):$(".post-title-link").length>1&&showTime(e)})</script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script></body></html>
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="hURnC-1VtFyi-v7OYQhy-5eOj-XZW3BAIs6iqzQcQj8" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="译文,React,JavaScript," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Jovey's Notes" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="前言React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是">
+<meta name="keywords" content="译文,React,JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用 React 是业务需求，而不是技术需求">
+<meta property="og:url" content="http://joveyzheng.com/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/index.html">
+<meta property="og:site_name" content="Jovey&#39;s Notes">
+<meta property="og:description" content="前言React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/800/1*pHvDgaslF8EClCehi6AiMA.png">
+<meta property="og:updated_time" content="2017-06-15T12:34:50.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用 React 是业务需求，而不是技术需求">
+<meta name="twitter:description" content="前言React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是">
+<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/800/1*pHvDgaslF8EClCehi6AiMA.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://joveyzheng.com/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/"/>
+
+
+
+
+
+  <title> 使用 React 是业务需求，而不是技术需求 | Jovey's Notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-67800719-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?9606ab0d78e68177424b20257101463b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jovey's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">心有猛虎 细嗅蔷薇</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://joveyzheng.com/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jovey Zheng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/static/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jovey's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用 React 是业务需求，而不是技术需求
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-12-15T12:23:23+08:00">
+                2015-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/好文分享/" itemprop="url" rel="index">
+                    <span itemprop="name">好文分享</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2015/12/15/using-react-is-a-business-decision-not-a-technology-choice/" class="leancloud_visitors" data-flag-title="使用 React 是业务需求，而不是技术需求">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>React 已经在开发者圈越来越流行了，并且有很多说明其技术优势的资源。然而，迁移（或是选择）一个新的框架最终归结为向所有人推销 —— 包括非开发者。这里会有一小部分工程经理或项目经理会因为它的新颖，而选择使用它来重构，更糟的是，很多团队被 JavaScript 的高生产工具搞得焦头烂额了，可悲的是向后移动项目是向前移动 web 的一部分。这篇文章并不是试图教你关于 React 的新东西，只是试着去总结以下，起点是为了向所有人说明 React 的疑惑，不仅是开发者。</p>
+<p><strong>总结</strong>：React 是一个为创建可组合的用户界面的库。同比其他类似的库如  Angular、Backbone、Knockout 和 Ember，React 的出现是为了解决业务问题而非技术的。接下来会为你解释 React 的重要性和对开发团队的益处。</p>
+<h1 id="降低风险"><a href="#降低风险" class="headerlink" title="降低风险"></a>降低风险</h1><p><strong>稳定性</strong> —— Facebook 花了很大的精力在 React 上（Newsfeed，Instagram，Messenger，Ads Marketplace 等），并且拥有专职的技术团队来维护这个项目。它的 dog-food 测试和投资都不是现有的任何一个项目能比的。除了 Facebook 内部的工程师，还有一大批 React 的爱好者。随着版本的更迭，目前在 github 上拥有 571 个贡献者（截止到 2015 年 12 月）。</p>
+<p><strong>正在使用 React</strong>：AirBnB，Asana，Atlassian，BBC，Chegg，CloudFlare，CNN.com，Codecademy，Coursera，Craftsy，Dailymotion，Dropbox，Expedia，Facebook，Feedly，Flipboard，HipChat，IMDb，Imgur，Instagram，Khan Academy，KISSmetrics，Mattermark，Minerva Project，Netflix，OkCupid，Rackspace，Rally Software，Ralph Lauren，Reddit，Redfin，Salesforce，Squarespace，The New York Times，Trunk Club，Twitter，Uber，University of Cincinnati，Venmo，WhatsApp，Wired，Wix，WordPress，Yahoo，Zendesk</p>
+<h1 id="开发效率"><a href="#开发效率" class="headerlink" title="开发效率"></a>开发效率</h1><p><strong>强大的路径迁移</strong> —— React 允许开发者可以根据自己的需求将其放到任何一个已经存在的页面上。值得注意的是，React 是需要加载一个运行时的库（React 0.14.0 的大小是 39.4 kb），因此零碎的迁移会导致页面重量的增加，直到旧版本的库被移除才会减少。</p>
+<a id="more"></a>
+<p><strong>默认情况下的性能</strong> —— React 的使用模式，让它很难写出低性能的代码。此外，自从它减少了与 DOM 的直接交互，使得它不仅可以代替现有的一些库（Angular/Backbone/Ember），也不再需要大量像 jQuery 一样的依赖，从而减少整体部署代码大小。</p>
+<p><strong>SEO</strong> —— SEO 是从服务器发送一个已经渲染好的页面到浏览器上。React 在设计时就考虑到了 SEO，它用 Node 可以在客户端或服务端进行渲染。其他工具允许在服务端进行渲染，但需要引入一些不稳定的 hack，同时还需要大量的人员去维护。而 React 有可能简化构建工具和减少维护成本。</p>
+<p><strong>提高了代码的重用</strong> —— React 在提供良好的性能同时还可以管理组件的渲染生命周期，如此一来可以显著地提高开发人员的开发效率。通过可重用组件的创造、分配和使用，使之更简单，这样开发人员就能更好地节省使用和开发通用组件的时间。就如按钮一样的低阶元素和可折叠元素一样的高阶元素。</p>
+<h1 id="提高开发效率"><a href="#提高开发效率" class="headerlink" title="提高开发效率"></a>提高开发效率</h1><p><strong>从混合资源中降低复杂度</strong> —— React 混合了 HTML 和 JavaScript，在此原则下，它们被紧紧地捆在一起，而分离它们是分离技术，这不是关注点。这个概念可以进一步扩展到 CSS，删除 CSS 开发过程中的一连串问题，包括全局命名、作用域/变量的隔离。详细请看：<a href="http://projects.formidablelabs.com/radium/" target="_blank" rel="external">Radium</a> 和 <a href="https://speakerdeck.com/vjeux/react-css-in-js" target="_blank" rel="external">React: CSS in js</a>。</p>
+<p><strong>错误的快速隔离</strong> —— Facebook 提供了一个浏览器的<a href="https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi?hl=en" target="_blank" rel="external">扩展应用</a>，帮助开发者更好地查看某一 UI 是由哪些 component 和数据组合生成的。详细请看<a href="https://www.youtube.com/watch?v=D-ioDiacTm8" target="_blank" rel="external">这里</a>。</p>
+<p><strong>简洁明了的代码</strong> —— 当前绝大多数的工具，都是以<strong>模型</strong>表示数据和<strong>视图</strong>显示数据结合在一起，从而生成丰富的 UI 交互。通常修改一个模型或视图（例如购物车）就可能在其他视图中触发“级联变化”，同时它依赖的是相同的数据。在一个大型应用中，依赖视图会变得很复杂，而且很难修复那些意想不到的 BUG。但是在 React 中，数据的流向是单向的，因此使得视图更容易理解。下面的图是展示信息的流动。<br><img src="https://cdn-images-1.medium.com/max/800/1*pHvDgaslF8EClCehi6AiMA.png" alt="stream"></p>
+<p><strong>提高了易测性</strong> —— 一个组件，React 的通常做法是抽象数据参数和输出一个没有其他副作用的 DOM。通过移除依赖使用和在 DOM 中创建 state 的 store，使得这些组件拥有更多的原子和可测试性。</p>
+<h1 id="开发团队的效益"><a href="#开发团队的效益" class="headerlink" title="开发团队的效益"></a>开发团队的效益</h1><p><strong>快捷的管理</strong> —— React 的 API 非常小，结合声明性语法和组件化的 UI 元素使新的开发人员能更快地上手 —— 特别是刚毕业的大学生或是不熟悉前端坏境的开发者。</p>
+<h1 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h1><h2 id="Facebook-Ads"><a href="#Facebook-Ads" class="headerlink" title="Facebook Ads"></a><a href="http://5by5.tv/changelog/149" target="_blank" rel="external">Facebook Ads</a></h2><p>“It was extremely difficult to change without causing some side effect or bug somewhere else in the application … When the team rebuilt it in React they found that their rate of new bugs being introduced had gone through the floor”</p>
+<p>-Spencer Ahrens</p>
+<p>“When a bug did come in it was much easier to figure out what was going wrong and make a targeted fix”</p>
+<p>-Spencer Ahrens</p>
+<h2 id="Netflix"><a href="#Netflix" class="headerlink" title="Netflix"></a><a href="http://techblog.netflix.com/2015/01/netflix-likes-react.html" target="_blank" rel="external">Netflix</a></h2><p>“React has exceeded our requirements and enabled us to build a tremendous foundation on which to innovate the Netflix experience”</p>
+<h2 id="Hit-Chat"><a href="#Hit-Chat" class="headerlink" title="Hit Chat"></a><a href="https://developer.atlassian.com/blog/2015/02/rebuilding-hipchat-with-react/" target="_blank" rel="external">Hit Chat</a></h2><p>“The dev speed we’ve gained…proves that we can release new client features faster and with more confidence on this platform than on any native client.”</p>
+<p><a href="https://blog.formidable.com/using-react-is-a-business-decision-not-a-technology-choice-63c4641c5f7#.o7fu0q9m6" target="_blank" rel="external"><strong>原文链接</strong></a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>如果觉得有用，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/static/wechatpay_reward.jpg" alt="Jovey Zheng WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/static/alipay_reward.jpg" alt="Jovey Zheng Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/译文/" rel="tag"># 译文</a>
+          
+            <a href="/tags/React/" rel="tag"># React</a>
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/12/07/best-tutorials-to-learn-reactjs/" rel="next" title="ReactJS 的学习教程">
+                <i class="fa fa-chevron-left"></i> ReactJS 的学习教程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2015/12/22/css-facts/" rel="prev" title="CSS 的使用中你可能不知道的 7 件事">
+                CSS 的使用中你可能不知道的 7 件事 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/static/avatar.jpg"
+               alt="Jovey Zheng" />
+          <p class="site-author-name" itemprop="name">Jovey Zheng</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">59</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jovey-zheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1633564683" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/9de90a2d9205/latest_articles" target="_blank" title="JianShu">
+                  
+                    <i class="fa fa-fw fa-heartbeat"></i>
+                  
+                  JianShu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#降低风险"><span class="nav-number">2.</span> <span class="nav-text">降低风险</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开发效率"><span class="nav-number">3.</span> <span class="nav-text">开发效率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#提高开发效率"><span class="nav-number">4.</span> <span class="nav-text">提高开发效率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#开发团队的效益"><span class="nav-number">5.</span> <span class="nav-text">开发团队的效益</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#案例"><span class="nav-number">6.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Facebook-Ads"><span class="nav-number">6.1.</span> <span class="nav-text">Facebook Ads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Netflix"><span class="nav-number">6.2.</span> <span class="nav-text">Netflix</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hit-Chat"><span class="nav-number">6.3.</span> <span class="nav-text">Hit Chat</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-leaf"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jovey Zheng</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GtpPev7lLD4ut1VecYz2zOcM-gzGzoHsz", "YvBv69p7tCHqpVqpaX5uo2Fy");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

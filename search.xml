@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title><![CDATA[Vue.js 核心系列 - 编译]]></title>
+    <url>%2F2020%2F03%2F12%2Fvuejs-core-complier%2F</url>
+    <content type="text"><![CDATA[从模板到真实 DOM 渲染的过程，中间有一个环节是把模板编译成 render 函数，这个过程我们把它称作编译。 Vue.js 提供了 2 个版本，一个是 Runtime + Compiler 的，一个是 Runtime only 的，前者是包含编译代码的，可以把编译过程放在运行时做，后者是不包含编译代码的，需要借助 webpack 的 vue-loader 事先把模板编译成 render 函数。 对编译过程的了解会让我们对 Vue 的指令、内置组件等有更好的理解。不过由于编译的过程是一个相对复杂的过程，我们只要求理解整体的流程、输入和输出即可，对于细节我们不必抠太细。 核心编译流程 我们将整个 Vue 的编译流程简化为如下三个核心步骤，分别是： parse -&gt; optimize -&gt; codeGen Parse 的目标是把 template 模板字符串转换成 AST 树（它是一种用 JavaScript 对象的形式来描述整个模板）。整个 parse 的过程是利用正则表达式顺序解析模板，当解析到开始标签、闭合标签、文本的时候都会分别执行对应的回调函数，来达到构造 AST 树的目的。 optimize 的过程，就是深度遍历这个 AST 树，去检测它的每一颗子树是不是静态节点，如果是静态节点则它们生成 DOM 永远不需要改变，这对运行时模板的更新起到极大的优化作用。 codeGen 中 genElement 针对不同情况，如静态节点 genStatic，生成 _m(xxxx) 的字符串 通过 createFunction 核心调用 new Function() 传入字符串生成 render 函数，生成 render 函数所要的字符串使用了 with 语句，目的是在不造成性能损失的情況下，减少变量的长度 With 语句在变量寻址的过程中会根据作用域链逐层查找，这样使得性能变差，所以最好在调用语句中只应该包含这个指定对象的属性，如： 123456var obj = &#123; id: 1, name: ‘a’ &#125;;with(obj) &#123; console.log(id) // 1 console.log(name) // a console.log(qq) // 这时候会逐层查找，非常耗性能，如果没有找到则抛出错误&#125; Render 函数调用的的最终结果是创建 vNode 包含各种类型 vNode，最后通过 patch 调用原生方法创建真实的 DOM 扩展 插槽（solt），有两种形式，普通插槽和作用域插槽，发生在 codegen 阶段， 它们有一个很大的差别是数据作用域 普通插槽是在父组件编译和渲染阶段生成 vnodes，所以数据的作用域是父组件实例，子组件渲染的时候直接拿到这些渲染好的 vnodes。 而对于作用域插槽，父组件在编译和渲染阶段并不会直接生成 vnodes，而是在父节点 vnode 的 data 中保留一个 scopedSlots 对象，存储着不同名称的插槽以及它们对应的渲染函数，只有在编译和渲染子组件阶段才会执行这个渲染函数生成 vnodes，由于是在子组件环境执行的，所以对应的数据作用域是子组件实例 参考 Vue.js 核心揭秘 - 编译]]></content>
+      <categories>
+        <category>笔记随笔</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+        <tag>核心系列</tag>
+        <tag>Vue.js</tag>
+        <tag>编译</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title><![CDATA[Vue.js 核心系列 - 响应式原理]]></title>
+    <url>%2F2020%2F02%2F18%2Fvuejs-core-reactive%2F</url>
+    <content type="text"><![CDATA[想对 Vue 有一个较深的了解，就必须要深入内核，看清楚当我们数据发生变化或触发动作时，Vue 是如何帮助我们更新视图的。 首先让我们来看一下“栗子”： 模板： 123&lt;div id="app" @click="changeMsg"&gt; &#123;&#123; message &#125;&#125;&lt;/div&gt; 脚本： 1234567891011var app = new Vue(&#123; el: '#app', data: &#123; message: 'Hello Vue!' &#125;, methods: &#123; changeMsg() &#123; this.message = 'Hello World!' &#125; &#125;&#125;) 这里我们可以看到，当我们触发 changeMsg 事件时，模板中的 message 会被更新，并且我们的视图也会随之更新，那么这里发生了什么呢？ 我们来看一下下面这张图： 下面分两个部分去了解其中的“玄机”： 几个核心概念 监听器 Observer ，用来劫持并监听所有属性（转变成setter/getter形式），如果属性发生变化，就通知订阅者 订阅器 Dep，用来收集订阅者，对监听器 Observer 和 订阅者 Watcher 进行统一管理 订阅者 Watcher，可以收到属性的变化通知并执行相应的方法，从而更新视图 解析器 Compile，可以解析每个节点的相关指令，对模板数据和订阅器进行初始化 核心流程 vue.js 是采用数据劫持结合发布者-订阅者模式的方式，通过Object.defineProperty()来劫持各个属性的setter，getter，在数据变动时发布消息给订阅者，触发相应的监听回调。 在初始化时调用 defineReactive，实例化一个 dep 负责派发更新，使用 Object.defineProperty 中的 setter 负责依赖收集 Dep：负责管理 Watcher，dep.notify() 实际调用 watcher 中的 update，按照需要更新的队列依次更新（按 id 先后顺序） 调用 watcher.before() 触发 beforeUpdate 的 hook，最终通过 vm._update 更新视图（到 diff 流程中） 实现一个数据监听器 Observer，对数据对象的所有属性进行监听，如有变动可拿到最新值并通知订阅者 （实现一个指令解析器 Compile，对每个元素节点的指令进行扫描和解析，根据指令模板替换数据，以及绑定相应的更新函数） 实现一个 Watcher，作为连接Observer和Compile的桥梁，订阅并收到每个属性变动的通知，执行指令绑定的相应回调函数，从而更新视图 参考 Vue.js 核心揭秘 - 深入响应式原理]]></content>
+      <categories>
+        <category>笔记随笔</category>
+      </categories>
+      <tags>
+        <tag>Vue</tag>
+        <tag>核心系列</tag>
+        <tag>响应式原理</tag>
+        <tag>Vue.js</tag>
+      </tags>
+  </entry>
+  <entry>
     <title><![CDATA[实用的 CSS — 动画性能对比]]></title>
     <url>%2F2017%2F07%2F18%2Fcss-animations-performance%2F</url>
     <content type="text"><![CDATA[前言在现代浏览器中，渲染页面所要负责的线程主要有两个：主线程和排版线程。 主线程 运行 JS 计算 HTML 元素的 CSS 样式 布局页面 把页面元素绘制成一个或多个位图 把这些位图移交给排版线程 在浏览器开始渲染页面，或者长时间执行某个 JS 时，主线程会一直在忙碌状态，此时对于用户的任何输入或是操作都不会有所响应。 排版线程 通过 GPU 渲染位图，并显示在屏幕上 向主线程请求更新位图的可见部分或即将可见的部分 判断出当前页面处于可见的部分 判断出即将通过页面滚动而可见的部分 随着用户滚动页面来移动这些部分 排版线程对于用户的操作保持快速的响应，普遍的效率时每秒 60 帧的速度去刷新显示。 Transtion下面我们在网页中实现一个元素的高度变化的动画，鼠标悬浮在元素上动画启动，直至完成： 1234567891011121314&lt;style&gt;#foo &#123; height: 100px; width: 100px; background: red; transition: height 1s linear;&#125;#foo:hover &#123; height: 200px;&#125;&lt;/style&gt;&lt;body&gt; &lt;div id="foo"&gt;&lt;/div&gt;&lt;/body&gt; 通过对上述代码的观察，让我们来了解一下浏览器的两个线程是如何协同工作的： 图中橘黄色部分代表操作相对较慢，消耗较大；蓝色部分代表操作相对较快，消耗较小 从上图我们可以看到，浏览器的两个线程在来回地切换工作，而且橘黄色出现次数较多，这意味着浏览器需要处理相当多的工作。 对于浏览器而言，由于元素的高度一直在变化，因此这个动画的每一帧中，都需要重新布局 ——&gt; 绘制页面 ——&gt; 将新的位图加载到 GPU 中 ——&gt; 显示。而其中加载到 GPU 是一个相对缓慢的操作。 同时我们也在通过浏览器去查看元素动画的过程，其实是由略微卡顿的现象的。 Transform经过上面的实验，我们对 transition 属性有了比较好的了解；同时我们对上述动画性能也有一个了解。接着我需要在网页中实现一个元素的大小变化动画，鼠标悬浮在元素上动画启动，直至完成： 1234567891011121314&lt;style&gt;#bar &#123; height: 100px; width: 100px; background: red; transition: transform 1s linear;&#125;#bar:hover &#123; transform: scale(2);&#125;&lt;/style&gt;&lt;body&gt; &lt;div id="bar"&gt;&lt;/div&gt;&lt;/body&gt; 完成上述实验，再让我们来看看两个线程工作的过程： 由此我们可以看到，两个线程来回切换的情况并不多，橘黄色部分出现的次数也较少，蓝色部分居绝大部分，这意味着这个动画效果相较于上面的要流畅很多。 在定义中，transform 是不会使浏览器产生重新排版的，因此 transform 不会影响原本的布局，以及周围的元素。它会将定义的元素作为一个整体进行缩放、移动或旋转等。 基于 transform 这类的特性，浏览器在渲染页面时可以节省很多不必要的开支，例如重新布局和将位图传给 GPU 等工作，这样就使得动画更有效率。 总结当页面需要位移动画时，我们有两种方案：使用 position 或是 transalte，而这两种是符合上述情况的。其中 position 的位移方案与第一个符合，在动画执行过程中会使浏览器重新渲染；另一外 transalte 则与第二个符合，在执行动画时不会发生重新渲染。因此，在需要写动画时，我们需要选择合适的方案，最好是选择 scale()、rotate()、transalte() 等，因为他们具有更好的性能。 参考W3C: CSS TransformsW3C: CSS Transitionscss-animations-and-transitions-performance]]></content>

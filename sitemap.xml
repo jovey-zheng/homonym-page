@@ -2,6 +2,20 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://joveyzheng.com/2020/03/12/vuejs-core-complier/</loc>
+    
+    <lastmod>2020-09-04T07:27:52.322Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://joveyzheng.com/2020/02/18/vuejs-core-reactive/</loc>
+    
+    <lastmod>2020-09-04T07:21:05.965Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://joveyzheng.com/2017/07/18/css-animations-performance/</loc>
     
     <lastmod>2017-07-19T06:52:57.000Z</lastmod>

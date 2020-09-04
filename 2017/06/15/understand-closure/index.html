@@ -1,1 +1,1180 @@
-<!doctype html><html class="theme-next pisces use-motion" lang="zh-Hans"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="google-site-verification" content="hURnC-1VtFyi-v7OYQhy-5eOj-XZW3BAIs6iqzQcQj8"><link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"><link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css"><link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css"><link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css"><meta name="keywords" content="JavaScript,closure,闭包,"><link rel="alternate" href="/atom.xml" title="Jovey's Notes" type="application/atom+xml"><link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico?v=5.1.0"><meta name="description" content="闭包 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。  作用域闭包的一个重点在于作用域，在 JavaScript 中变量的作用域分两"><meta name="keywords" content="JavaScript,closure,闭包"><meta property="og:type" content="article"><meta property="og:title" content="理解闭包"><meta property="og:url" content="http://joveyzheng.com/2017/06/15/understand-closure/index.html"><meta property="og:site_name" content="Jovey&#39;s Notes"><meta property="og:description" content="闭包 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。  作用域闭包的一个重点在于作用域，在 JavaScript 中变量的作用域分两"><meta property="og:updated_time" content="2017-06-15T12:36:46.000Z"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="理解闭包"><meta name="twitter:description" content="闭包 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。  作用域闭包的一个重点在于作用域，在 JavaScript 中变量的作用域分两"><script type="text/javascript" id="hexo.configurations">var NexT=window.NexT||{},CONFIG={root:"/",scheme:"Pisces",sidebar:{position:"left",display:"post",offset:12,offset_float:0,b2t:!1,scrollpercent:!1},fancybox:!0,motion:!0,duoshuo:{userId:"0",author:"博主"},algolia:{applicationID:"",apiKey:"",indexName:"",hits:{per_page:10},labels:{input_placeholder:"Search for Posts",hits_empty:"We didn't find any results for the search: ${query}",hits_stats:"${hits} results found in ${time} ms"}}}</script><link rel="canonical" href="http://joveyzheng.com/2017/06/15/understand-closure/"><title> 理解闭包 | Jovey's Notes</title></head><body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans"><script>!function(e,t,a,n,c,o,s){e.GoogleAnalyticsObject=c,e[c]=e[c]||function(){(e[c].q=e[c].q||[]).push(arguments)},e[c].l=1*new Date,o=t.createElement(a),s=t.getElementsByTagName(a)[0],o.async=1,o.src="https://www.google-analytics.com/analytics.js",s.parentNode.insertBefore(o,s)}(window,document,"script",0,"ga"),ga("create","UA-67800719-1","auto"),ga("send","pageview")</script><script type="text/javascript">var _hmt=_hmt||[];!function(){var e=document.createElement("script");e.src="https://hm.baidu.com/hm.js?9606ab0d78e68177424b20257101463b";var t=document.getElementsByTagName("script")[0];t.parentNode.insertBefore(e,t)}()</script><div class="container sidebar-position-left page-post-detail"><div class="headband"></div><header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="header-inner"><div class="site-brand-wrapper"><div class="site-meta"><div class="custom-logo-site-title"><a href="/" class="brand" rel="start"><span class="logo-line-before"><i></i></span> <span class="site-title">Jovey's Notes</span><span class="logo-line-after"><i></i></span></a></div><h1 class="site-subtitle" itemprop="description">心有猛虎 细嗅蔷薇</h1></div><div class="site-nav-toggle"> <button><span class="btn-bar"></span><span class="btn-bar"></span><span class="btn-bar"></span></button></div></div><nav class="site-nav"><ul id="menu" class="menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i><br> 首页</a></li><li class="menu-item menu-item-categories"><a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i><br> 分类</a></li><li class="menu-item menu-item-about"><a href="/about" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i><br> 关于</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i><br> 归档</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i><br> 标签</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="menu-item-icon fa fa-fw fa-sitemap"></i><br> 站点地图</a></li><li class="menu-item menu-item-search"><a href="javascript:;" class="popup-trigger"><i class="menu-item-icon fa fa-search fa-fw"></i><br> 搜索</a></li></ul><div class="site-search"><div class="popup search-popup local-search-popup"><div class="local-search-header clearfix"><span class="search-icon"><i class="fa fa-search"></i></span><span class="popup-btn-close"><i class="fa fa-times-circle"></i></span><div class="local-search-input-wrapper"> <input autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input"></div></div><div id="local-search-result"></div></div></div></nav></div></header><main id="main" class="main"><div class="main-inner"><div class="content-wrap"><div id="content" class="content"><div id="posts" class="posts-expand"><article class="post post-type-normal" itemscope itemtype="http://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://joveyzheng.com/2017/06/15/understand-closure/"><span hidden itemprop="author" itemscope itemtype="http://schema.org/Person"><meta itemprop="name" content="Jovey Zheng"><meta itemprop="description" content=""><meta itemprop="image" content="/static/avatar.jpg"></span><span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="Jovey's Notes"></span><header class="post-header"><h2 class="post-title" itemprop="name headline"> 理解闭包</h2><div class="post-meta"><span class="post-time"><span class="post-meta-item-icon"><i class="fa fa-calendar-o"></i></span> <span class="post-meta-item-text">发表于</span> <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-15T12:04:33+08:00">2017-06-15</time></span> <span class="post-category"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-folder-o"></i></span> <span class="post-meta-item-text">分类于</span> <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/笔记随笔/" itemprop="url" rel="index"><span itemprop="name">笔记随笔</span></a></span></span> <span id="/2017/06/15/understand-closure/" class="leancloud_visitors" data-flag-title="理解闭包"><span class="post-meta-divider">|</span><span class="post-meta-item-icon"><i class="fa fa-eye"></i></span> <span class="post-meta-item-text">阅读次数</span><span class="leancloud-visitors-count"></span></span></div></header><div class="post-body" itemprop="articleBody"><blockquote><p><strong>闭包</strong> 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。</p></blockquote><h1 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h1><p>闭包的一个重点在于<strong>作用域</strong>，在 JavaScript 中变量的作用域分两种：全局变量与局部变量，首先让我们来了解一下：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> _global = <span class="number">1</span>;  <span class="comment">// 全局变量</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> _internal = <span class="number">2</span>;  <span class="comment">// 局部变量</span></div><div class="line"></div><div class="line">  <span class="built_in">console</span>.log(_global); <span class="comment">// 1</span></div><div class="line">  <span class="built_in">console</span>.log(_internal); <span class="comment">// 2</span></div><div class="line">  <span class="keyword">return</span> _internal;</div><div class="line">&#125;</div><div class="line"></div><div class="line">print();</div><div class="line"><span class="built_in">console</span>.log(_global); <span class="comment">// 1</span></div><div class="line"><span class="built_in">console</span>.log(_internal); <span class="comment">// ReferenceError: _internal is not defined</span></div></pre></td></tr></table></figure><p>此时我们可以看到，在函数内部是可以直接读取全局变量的。但当我们在外部想访问内部变量时，就会报错，因为在函数体外部时无法访问函数内部的变量的。</p><p>需要注意的是，当在函数内部定义变量时没用使用 <code>var</code> 等声明变量，那么它实际上会成为一个<strong>全局变量</strong>：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  _internal = <span class="number">2</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">console</span>.log(_internal); <span class="comment">// 2</span></div></pre></td></tr></table></figure><p>从内存中解释，变量的声明都存在栈中，而在 JavaScript 中存在垃圾回收机制（garbage collection），当一个函数执行完返回之后，它的内存会被自动回收，此时函数内部的变量都会被销毁。</p><p>那么我们有什么方法可以保存这一内存，并且在外部访问函数内部的变量呢 —— <strong>闭包</strong>。</p><a id="more"></a><h1 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h1><p>在正常情况下，我们在外部时无法修改函数内部变量的值：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 场景 1</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> _internal = <span class="number">1</span>;</div><div class="line"></div><div class="line">  <span class="built_in">console</span>.log(_internal + <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line">print(<span class="number">1</span>); <span class="comment">// 2</span></div><div class="line"><span class="comment">// ...</span></div><div class="line">print(<span class="number">1</span>); <span class="comment">// 2</span></div></pre></td></tr></table></figure><p>我们可以看到，无论 <code>print()</code> 调用多少次，打印的值都是 <code>2</code>，<code>_internal</code> 的值都是 <code>1</code>。</p><p>这是因为 JavaScript 中的垃圾回收机制，在多次调用 <code>print()</code> 时，每一次都需要回收前一次的内存，之后再次申请新内存，因此 <code>_internal</code> 无法在内存中继续保存。</p><p>换而言之，在每次调用 <code>print()</code> 时都需要为其和内部的变量申请新的内存空间，第一次 <code>_internal</code> 的内存地址可能为 <code>0x...1</code>，在函数调用完成之后，这块内存将被释放，再次调用时 <code>_internal</code> 的内存地址可能就是 <code>0x...2</code> 了。因此它无法再内存中被保存下来。</p><p>那么我们需要在外部使用函数内部的变量时，就需要在函数内部再声明一个函数，并将其返回：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> _internal = <span class="number">1</span>;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">log</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(_internal);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> test = print();</div><div class="line">test(); <span class="comment">// 1</span></div></pre></td></tr></table></figure><p>此时，我们已经可以从外部访问 <code>print()</code> 函数内部的变量了。</p><p>当我们需要对 <code>print()</code> 函数内部的 <code>_internal</code> 的值进行修改时，我们可以给它另外一个函数：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// 场景 2</span></div><div class="line"><span class="keyword">var</span> add;</div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> _internal = <span class="number">1</span>;</div><div class="line"></div><div class="line">  add = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</div><div class="line">    _internal += x;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">log</span>(<span class="params"></span>) </span>&#123;</div><div class="line">    <span class="built_in">console</span>.log(_internal);</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> test = print();</div><div class="line">test(); <span class="comment">// 1</span></div><div class="line">add(<span class="number">1</span>);</div><div class="line">test(); <span class="comment">// 2</span></div></pre></td></tr></table></figure><p>经过上述可以看出，函数 <code>print()</code> 在经过 <code>add()</code> 运行之后，<code>_internal</code> 的值分别为 <code>1</code> 和 <code>2</code>，这就说明了 <code>_internal</code> 始终保存在内存中，并没有在 <code>var test = print();</code> 调用时被回收。</p><p>这是因为 <code>print()</code> 内的 <code>log()</code> 作为返回值，被赋给 <code>test</code> 这个全局变量，因此 <code>log()</code> 始终在内存中。而 <code>log()</code> 依赖 <code>print()</code> 并且可以访问 <code>_internal</code>，所以 <code>print()</code> 也始终在内存中，而且在 <code>var test = print();</code> 调用时没有被回收。</p><p>换而言之，当 <code>_internal</code> 在声明的时候分配了内存，我们可以将其内存地址表示为 <code>0x...1</code>，在 <code>print()</code> 函数被调用之后应该会被回收，但是由于上述原因，没有被回收，它的值将继续保留在地址为 <code>0x...1</code> 中。在外部可以使用指针去寻址，并取得其值。</p><h1 id="其他例子"><a href="#其他例子" class="headerlink" title="其他例子"></a>其他例子</h1><p>在循环体中，我们可能遇到：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> arr = [];</div><div class="line"></div><div class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">    arr[i] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> i;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> arr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> test = loopA();</div><div class="line">test[<span class="number">0</span>]();  <span class="comment">// 10</span></div><div class="line">test[<span class="number">1</span>]();  <span class="comment">// 10</span></div><div class="line"><span class="comment">// ...</span></div><div class="line">test[<span class="number">9</span>]();  <span class="comment">// 10</span></div></pre></td></tr></table></figure><p>在上述例子中，我们需要他们执行不同的参数得到不同的值。但是一共创建了 10 次匿名函数，，他们都是共享同一个环境的。在匿名函数执行之前，循环早已完成，此时的匿名函数一局指向循环体中的最后一个值了。</p><ul><li><p>解决方案 1：<br>在 <code>es6</code> 中我们可以使用 <code>let</code> 声明：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> arr = [];</div><div class="line"></div><div class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">    arr[i] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> i;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> arr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> test = loopA();</div><div class="line">test[<span class="number">0</span>]();  <span class="comment">// 0</span></div><div class="line">test[<span class="number">1</span>]();  <span class="comment">// 1</span></div><div class="line"><span class="comment">// ...</span></div><div class="line">test[<span class="number">9</span>]();  <span class="comment">// 9</span></div></pre></td></tr></table></figure></li><li><p>解决方案 2：<br>将函数声明放在循环体外部：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> arr = [];</div><div class="line">  <span class="keyword">var</span> func = <span class="function"><span class="keyword">function</span>(<span class="params">n</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> n;</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">    arr[i] = func(i)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> arr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> test = loopA();</div><div class="line">test[<span class="number">0</span>];  <span class="comment">// 0</span></div><div class="line">test[<span class="number">1</span>];  <span class="comment">// 1</span></div><div class="line">test[<span class="number">9</span>];  <span class="comment">// 9</span></div></pre></td></tr></table></figure></li><li><p>解决方案 3：</p><figure class="highlight js"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</div><div class="line">  <span class="keyword">var</span> arr = [];</div><div class="line"></div><div class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</div><div class="line">    arr[i] = (<span class="function"><span class="keyword">function</span>(<span class="params">i</span>) </span>&#123;</div><div class="line">      <span class="keyword">return</span> i;</div><div class="line">    &#125;)(i)</div><div class="line">  &#125;</div><div class="line"></div><div class="line">  <span class="keyword">return</span> arr;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> test = loopA();</div><div class="line">test[<span class="number">0</span>];  <span class="comment">// 0</span></div><div class="line">test[<span class="number">1</span>];  <span class="comment">// 1</span></div><div class="line">test[<span class="number">9</span>];  <span class="comment">// 9</span></div></pre></td></tr></table></figure></li><li><p>其他解决方案请看<a href="#参考">参考</a></p></li></ul><h1 id="弊端"><a href="#弊端" class="headerlink" title="弊端"></a>弊端</h1><ul><li>内存泄漏：由于闭包会使得函数内部的变量都被保存在内存中，不会被销毁，内存消耗很大。因此需要在退出函数之前，将不使用的变量都删除。</li><li>会修改函数内部变量的值。</li></ul><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>闭包是一种特殊的对象。它由两部分构成：函数，以及创建该函数的环境。环境由闭包创建时在作用域中的任何局部变量组成。<br>如果不是因为某些特殊任务而需要闭包，在没有必要的情况下，在其它函数中创建函数是不明智的，因为闭包对脚本性能具有负面影响，包括处理速度和内存消耗。</p><h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://baike.baidu.com/link?url=Gz24DLW_-l_Yn4FkNhonNSvQTgsgGNLp3xeDww9Cjbq_YjvtxIOqwAxVx9R8s5z1if2BdDCtP_cJmz20WV91qi6OTxO-C_qcMnLEFzhvu8C" target="_blank" rel="external">百度百科 - 闭包</a><br><a href="https://en.wikipedia.org/wiki/Closure_(computer_programming)" target="_blank" rel="external">Wikipedia - Closure</a><br><a href="http://www.ruanyifeng.com/blog/2009/08/learning_javascript_closures.html" target="_blank" rel="external">学习 Javascript 闭包（Closure）</a><br><a href="https://developer.mozilla.org/cn/docs/Web/JavaScript/Closures" target="_blank" rel="external">MDN - 闭包</a><br><a href="http://www.cnblogs.com/xiaohuochai/p/5730085.html" target="_blank" rel="external">深入理解闭包系列第二篇——从执行环境角度看闭包</a><br><a href="http://www.cnblogs.com/xiaohuochai/p/5731641.html" target="_blank" rel="external">深入理解闭包系列第四篇——常见的一个循环和闭包的错误详解</a><br><a href="http://www.cnblogs.com/wangfupeng1988/p/3994065.html" target="_blank" rel="external">深入理解javascript原型和闭包（15）——闭包</a></p></div><div></div><div><div style="padding:10px 0;margin:20px auto;width:90%;text-align:center"><div>如果觉得有用，您的支持将鼓励我继续创作！</div> <button id="rewardButton" disable="enable" onclick='var qr=document.getElementById("QR");"none"===qr.style.display?qr.style.display="block":qr.style.display="none"'> <span>赏</span></button><div id="QR" style="display:none"><div id="wechat" style="display:inline-block"> <img id="wechat_qr" src="/static/wechatpay_reward.jpg" alt="Jovey Zheng WeChat Pay"><p>微信打赏</p></div><div id="alipay" style="display:inline-block"> <img id="alipay_qr" src="/static/alipay_reward.jpg" alt="Jovey Zheng Alipay"><p>支付宝打赏</p></div></div></div></div><div></div><footer class="post-footer"><div class="post-tags"> <a href="/tags/JavaScript/" rel="tag"># JavaScript</a> <a href="/tags/closure/" rel="tag"># closure</a> <a href="/tags/闭包/" rel="tag"># 闭包</a></div><div class="post-nav"><div class="post-nav-next post-nav-item"><a href="/2016/03/16/css-cubic-bezier/" rel="next" title="实用的 CSS — 贝塞尔曲线(cubic-bezier)"><i class="fa fa-chevron-left"></i> 实用的 CSS — 贝塞尔曲线(cubic-bezier)</a></div><span class="post-nav-divider"></span><div class="post-nav-prev post-nav-item"> <a href="/2017/07/18/css-animations-performance/" rel="prev" title="实用的 CSS — 动画性能对比">实用的 CSS — 动画性能对比<i class="fa fa-chevron-right"></i></a></div></div></footer></article><div class="post-spread"><div class="jiathis_style"><a class="jiathis_button_tsina"></a><a class="jiathis_button_tqq"></a><a class="jiathis_button_weixin"></a><a class="jiathis_button_cqq"></a><a class="jiathis_button_douban"></a><a class="jiathis_button_renren"></a><a class="jiathis_button_qzone"></a><a class="jiathis_button_kaixin001"></a><a class="jiathis_button_copy"></a><a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a><a class="jiathis_counter_style"></a></div><script type="text/javascript">var jiathis_config={hideMore:!1}</script><script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script></div></div></div><div class="comments" id="comments"></div></div><div class="sidebar-toggle"><div class="sidebar-toggle-line-wrap"><span class="sidebar-toggle-line sidebar-toggle-line-first"></span><span class="sidebar-toggle-line sidebar-toggle-line-middle"></span><span class="sidebar-toggle-line sidebar-toggle-line-last"></span></div></div><aside id="sidebar" class="sidebar"><div class="sidebar-inner"><ul class="sidebar-nav motion-element"><li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap"> 文章目录</li><li class="sidebar-nav-overview" data-target="site-overview"> 站点概览</li></ul><section class="site-overview sidebar-panel"><div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person"> <img class="site-author-image" itemprop="image" src="/static/avatar.jpg" alt="Jovey Zheng"><p class="site-author-name" itemprop="name">Jovey Zheng</p><p class="site-description motion-element" itemprop="description"></p></div><nav class="site-state motion-element"><div class="site-state-item site-state-posts"> <a href="/archives"><span class="site-state-item-count">22</span> <span class="site-state-item-name">日志</span></a></div><div class="site-state-item site-state-categories"> <a href="/categories/index.html"><span class="site-state-item-count">6</span> <span class="site-state-item-name">分类</span></a></div><div class="site-state-item site-state-tags"> <a href="/tags/index.html"><span class="site-state-item-count">52</span> <span class="site-state-item-name">标签</span></a></div></nav><div class="feed-link motion-element"><a href="/atom.xml" rel="alternate"><i class="fa fa-rss"></i> RSS</a></div><div class="links-of-author motion-element"><span class="links-of-author-item"><a href="https://github.com/jovey-zheng" target="_blank" title="GitHub"><i class="fa fa-fw fa-github"></i> GitHub</a></span><span class="links-of-author-item"><a href="http://weibo.com/u/1633564683" target="_blank" title="Weibo"><i class="fa fa-fw fa-weibo"></i> Weibo</a></span><span class="links-of-author-item"><a href="http://www.jianshu.com/users/9de90a2d9205/latest_articles" target="_blank" title="JianShu"><i class="fa fa-fw fa-heartbeat"></i> JianShu</a></span></div></section><section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active"><div class="post-toc"><div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#作用域"><span class="nav-number">1.</span> <span class="nav-text">作用域</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#闭包"><span class="nav-number">2.</span> <span class="nav-text">闭包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他例子"><span class="nav-number">3.</span> <span class="nav-text">其他例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#弊端"><span class="nav-number">4.</span> <span class="nav-text">弊端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div></div></section></div></aside></div></main><footer id="footer" class="footer"><div class="footer-inner"><div class="copyright"> &copy; 2015 - <span itemprop="copyrightYear">2017</span><span class="with-love"><i class="fa fa-leaf"></i></span> <span class="author" itemprop="copyrightHolder">Jovey Zheng</span></div></div></footer><div class="back-to-top"><i class="fa fa-arrow-up"></i></div></div><script type="text/javascript">"[object Function]"!==Object.prototype.toString.call(window.Promise)&&(window.Promise=null)</script><script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script><script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script><script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script><script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script><script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script><script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script><script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script><script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script><script type="text/javascript">function proceedsearch(){$("body").append('<div class="search-popup-overlay local-search-pop-overlay"></div>').css("overflow","hidden"),$(".popup").toggle()}var isfetched=!1,search_path="search.xml";0==search_path.length&&(search_path="search.xml");var path="/"+search_path,searchFunc=function(e,t,a){"use strict";$.ajax({url:e,dataType:"xml",async:!0,success:function(e){isfetched=!0,$(".popup").detach().appendTo(".header-inner");var r=$("entry",e).map(function(){return{title:$("title",this).text(),content:$("content",this).text(),url:$("url",this).text()}}).get(),c=document.getElementById(t),s=document.getElementById(a);c.addEventListener("input",function(){var e=0,t='<ul class="search-result-list">',a=this.value.trim().toLowerCase().split(/[\s\-]+/);s.innerHTML="",this.value.trim().length>1&&r.forEach(function(r){var c=!1,s=r.title.trim().toLowerCase(),o=r.content.trim().replace(/<[^>]+>/g,"").toLowerCase(),n=decodeURIComponent(r.url),i=-1,l=-1,p=-1;if(""!=s&&a.forEach(function(e,t){i=s.indexOf(e),l=o.indexOf(e),(i>=0||l>=0)&&(c=!0,0==t&&(p=l))}),c){e+=1,t+="<li><a href='"+n+"' class='search-result-title'>"+s+"</a>";var h=r.content.trim().replace(/<[^>]+>/g,"");if(p>=0){var u=p-20,d=p+80;u<0&&(u=0),0==u&&(d=50),d>h.length&&(d=h.length);var f=h.substring(u,d);a.forEach(function(e){var t=new RegExp(e,"gi");f=f.replace(t,'<b class="search-keyword">'+e+"</b>")}),t+='<p class="search-result">'+f+"...</p>"}t+="</li>"}}),t+="</ul>",0==e&&(t='<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'),""==a&&(t='<div id="no-result"><i class="fa fa-search fa-5x" /></div>'),s.innerHTML=t}),proceedsearch()}})};$(".popup-trigger").click(function(e){e.stopPropagation(),0==isfetched?searchFunc(path,"local-search-input","local-search-result"):proceedsearch()}),$(".popup-btn-close").click(function(e){$(".popup").hide(),$(".local-search-pop-overlay").remove(),$("body").css("overflow","")}),$(".popup").click(function(e){e.stopPropagation()})</script><script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script><script>AV.initialize("GtpPev7lLD4ut1VecYz2zOcM-gzGzoHsz","YvBv69p7tCHqpVqpaX5uo2Fy")</script><script>function showTime(e){var t=new AV.Query(e),n=[],o=$(".leancloud_visitors");o.each(function(){n.push($(this).attr("id").trim())}),t.containedIn("url",n),t.find().done(function(e){if(0!==e.length){for(c=0;c<e.length;c++){var t=e[c],i=t.get("url"),s=t.get("time"),l=document.getElementById(i);$(l).find(".leancloud-visitors-count").text(s)}for(var c=0;c<n.length;c++){var i=n[c],l=document.getElementById(i),r=$(l).find(".leancloud-visitors-count");""==r.text()&&r.text(0)}}else o.find(".leancloud-visitors-count").text(0)}).fail(function(e,t){console.log("Error: "+t.code+" "+t.message)})}function addCount(e){var t=$(".leancloud_visitors"),n=t.attr("id").trim(),o=t.attr("data-flag-title").trim(),i=new AV.Query(e);i.equalTo("url",n),i.find({success:function(t){if(t.length>0){var i=t[0];i.fetchWhenSave(!0),i.increment("time"),i.save(null,{success:function(e){$(document.getElementById(n)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to save Visitor num, with error message: "+t.message)}})}else{var s=new e,l=new AV.ACL;l.setPublicReadAccess(!0),l.setPublicWriteAccess(!0),s.setACL(l),s.set("title",o),s.set("url",n),s.set("time",1),s.save(null,{success:function(e){$(document.getElementById(n)).find(".leancloud-visitors-count").text(e.get("time"))},error:function(e,t){console.log("Failed to create")}})}},error:function(e){console.log("Error:"+e.code+" "+e.message)}})}$(function(){var e=AV.Object.extend("Counter");1==$(".leancloud_visitors").length?addCount(e):$(".post-title-link").length>1&&showTime(e)})</script><script>!function(){var t=document.createElement("script"),e=window.location.protocol.split(":")[0];t.src="https"===e?"https://zz.bdstatic.com/linksubmit/push.js":"http://push.zhanzhang.baidu.com/push.js";var s=document.getElementsByTagName("script")[0];s.parentNode.insertBefore(t,s)}()</script></body></html>
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="hURnC-1VtFyi-v7OYQhy-5eOj-XZW3BAIs6iqzQcQj8" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JavaScript,closure,闭包," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="Jovey's Notes" type="application/atom+xml" />
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="闭包 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。  作用域闭包的一个重点在于作用域，在 JavaScript 中变量的作用域分两">
+<meta name="keywords" content="JavaScript,closure,闭包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="理解闭包">
+<meta property="og:url" content="http://joveyzheng.com/2017/06/15/understand-closure/index.html">
+<meta property="og:site_name" content="Jovey&#39;s Notes">
+<meta property="og:description" content="闭包 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。  作用域闭包的一个重点在于作用域，在 JavaScript 中变量的作用域分两">
+<meta property="og:updated_time" content="2017-06-15T12:36:46.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="理解闭包">
+<meta name="twitter:description" content="闭包 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。  作用域闭包的一个重点在于作用域，在 JavaScript 中变量的作用域分两">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://joveyzheng.com/2017/06/15/understand-closure/"/>
+
+
+
+
+
+  <title> 理解闭包 | Jovey's Notes </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-67800719-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?9606ab0d78e68177424b20257101463b";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jovey's Notes</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">心有猛虎 细嗅蔷薇</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br />
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocapitalize="off" autocomplete="off" autocorrect="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://joveyzheng.com/2017/06/15/understand-closure/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jovey Zheng">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/static/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jovey's Notes">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                理解闭包
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-15T12:04:33+08:00">
+                2017-06-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/笔记随笔/" itemprop="url" rel="index">
+                    <span itemprop="name">笔记随笔</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/06/15/understand-closure/" class="leancloud_visitors" data-flag-title="理解闭包">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><strong>闭包</strong> 是指可以包含自由（未绑定到特定对象）变量的代码块；这些变量不是在这个代码块内或者任何全局上下文中定义的，而是在定义代码块的环境中定义（局部变量）。“闭包” 一词来源于以下两者的结合：要执行的代码块（由于自由变量被包含在代码块中，这些自由变量以及它们引用的对象没有被释放）和为自由变量提供绑定的计算环境（作用域）。</p>
+</blockquote>
+<h1 id="作用域"><a href="#作用域" class="headerlink" title="作用域"></a>作用域</h1><p>闭包的一个重点在于<strong>作用域</strong>，在 JavaScript 中变量的作用域分两种：全局变量与局部变量，首先让我们来了解一下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> _global = <span class="number">1</span>;  <span class="comment">// 全局变量</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> _internal = <span class="number">2</span>;  <span class="comment">// 局部变量</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(_global); <span class="comment">// 1</span></span><br><span class="line">  <span class="built_in">console</span>.log(_internal); <span class="comment">// 2</span></span><br><span class="line">  <span class="keyword">return</span> _internal;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print();</span><br><span class="line"><span class="built_in">console</span>.log(_global); <span class="comment">// 1</span></span><br><span class="line"><span class="built_in">console</span>.log(_internal); <span class="comment">// ReferenceError: _internal is not defined</span></span><br></pre></td></tr></table></figure>
+<p>此时我们可以看到，在函数内部是可以直接读取全局变量的。但当我们在外部想访问内部变量时，就会报错，因为在函数体外部时无法访问函数内部的变量的。</p>
+<p>需要注意的是，当在函数内部定义变量时没用使用 <code>var</code> 等声明变量，那么它实际上会成为一个<strong>全局变量</strong>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  _internal = <span class="number">2</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(_internal); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<p>从内存中解释，变量的声明都存在栈中，而在 JavaScript 中存在垃圾回收机制（garbage collection），当一个函数执行完返回之后，它的内存会被自动回收，此时函数内部的变量都会被销毁。</p>
+<p>那么我们有什么方法可以保存这一内存，并且在外部访问函数内部的变量呢 —— <strong>闭包</strong>。</p>
+<a id="more"></a>
+<h1 id="闭包"><a href="#闭包" class="headerlink" title="闭包"></a>闭包</h1><p>在正常情况下，我们在外部时无法修改函数内部变量的值：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 场景 1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> _internal = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">console</span>.log(_internal + <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">print(<span class="number">1</span>); <span class="comment">// 2</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">print(<span class="number">1</span>); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<p>我们可以看到，无论 <code>print()</code> 调用多少次，打印的值都是 <code>2</code>，<code>_internal</code> 的值都是 <code>1</code>。</p>
+<p>这是因为 JavaScript 中的垃圾回收机制，在多次调用 <code>print()</code> 时，每一次都需要回收前一次的内存，之后再次申请新内存，因此 <code>_internal</code> 无法在内存中继续保存。</p>
+<p>换而言之，在每次调用 <code>print()</code> 时都需要为其和内部的变量申请新的内存空间，第一次 <code>_internal</code> 的内存地址可能为 <code>0x...1</code>，在函数调用完成之后，这块内存将被释放，再次调用时 <code>_internal</code> 的内存地址可能就是 <code>0x...2</code> 了。因此它无法再内存中被保存下来。</p>
+<p>那么我们需要在外部使用函数内部的变量时，就需要在函数内部再声明一个函数，并将其返回：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> _internal = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">log</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(_internal);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> test = print();</span><br><span class="line">test(); <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+<p>此时，我们已经可以从外部访问 <code>print()</code> 函数内部的变量了。</p>
+<p>当我们需要对 <code>print()</code> 函数内部的 <code>_internal</code> 的值进行修改时，我们可以给它另外一个函数：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 场景 2</span></span><br><span class="line"><span class="keyword">var</span> add;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">print</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> _internal = <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">  add = <span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    _internal += x;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">log</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(_internal);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> test = print();</span><br><span class="line">test(); <span class="comment">// 1</span></span><br><span class="line">add(<span class="number">1</span>);</span><br><span class="line">test(); <span class="comment">// 2</span></span><br></pre></td></tr></table></figure>
+<p>经过上述可以看出，函数 <code>print()</code> 在经过 <code>add()</code> 运行之后，<code>_internal</code> 的值分别为 <code>1</code> 和 <code>2</code>，这就说明了 <code>_internal</code> 始终保存在内存中，并没有在 <code>var test = print();</code> 调用时被回收。</p>
+<p>这是因为 <code>print()</code> 内的 <code>log()</code> 作为返回值，被赋给 <code>test</code> 这个全局变量，因此 <code>log()</code> 始终在内存中。而 <code>log()</code> 依赖 <code>print()</code> 并且可以访问 <code>_internal</code>，所以 <code>print()</code> 也始终在内存中，而且在 <code>var test = print();</code> 调用时没有被回收。</p>
+<p>换而言之，当 <code>_internal</code> 在声明的时候分配了内存，我们可以将其内存地址表示为 <code>0x...1</code>，在 <code>print()</code> 函数被调用之后应该会被回收，但是由于上述原因，没有被回收，它的值将继续保留在地址为 <code>0x...1</code> 中。在外部可以使用指针去寻址，并取得其值。</p>
+<h1 id="其他例子"><a href="#其他例子" class="headerlink" title="其他例子"></a>其他例子</h1><p>在循环体中，我们可能遇到：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> arr = [];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    arr[i] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> test = loopA();</span><br><span class="line">test[<span class="number">0</span>]();  <span class="comment">// 10</span></span><br><span class="line">test[<span class="number">1</span>]();  <span class="comment">// 10</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">test[<span class="number">9</span>]();  <span class="comment">// 10</span></span><br></pre></td></tr></table></figure>
+<p>在上述例子中，我们需要他们执行不同的参数得到不同的值。但是一共创建了 10 次匿名函数，，他们都是共享同一个环境的。在匿名函数执行之前，循环早已完成，此时的匿名函数一局指向循环体中的最后一个值了。</p>
+<ul>
+<li><p>解决方案 1：<br>在 <code>es6</code> 中我们可以使用 <code>let</code> 声明：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> arr = [];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    arr[i] = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> test = loopA();</span><br><span class="line">test[<span class="number">0</span>]();  <span class="comment">// 0</span></span><br><span class="line">test[<span class="number">1</span>]();  <span class="comment">// 1</span></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">test[<span class="number">9</span>]();  <span class="comment">// 9</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解决方案 2：<br>将函数声明放在循环体外部：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> arr = [];</span><br><span class="line">  <span class="keyword">var</span> func = <span class="function"><span class="keyword">function</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> n;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    arr[i] = func(i)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> test = loopA();</span><br><span class="line">test[<span class="number">0</span>];  <span class="comment">// 0</span></span><br><span class="line">test[<span class="number">1</span>];  <span class="comment">// 1</span></span><br><span class="line">test[<span class="number">9</span>];  <span class="comment">// 9</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解决方案 3：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">loopA</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> arr = [];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">    arr[i] = (<span class="function"><span class="keyword">function</span>(<span class="params">i</span>) </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> i;</span><br><span class="line">    &#125;)(i)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> test = loopA();</span><br><span class="line">test[<span class="number">0</span>];  <span class="comment">// 0</span></span><br><span class="line">test[<span class="number">1</span>];  <span class="comment">// 1</span></span><br><span class="line">test[<span class="number">9</span>];  <span class="comment">// 9</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>其他解决方案请看<a href="#参考">参考</a></p>
+</li>
+</ul>
+<h1 id="弊端"><a href="#弊端" class="headerlink" title="弊端"></a>弊端</h1><ul>
+<li>内存泄漏：由于闭包会使得函数内部的变量都被保存在内存中，不会被销毁，内存消耗很大。因此需要在退出函数之前，将不使用的变量都删除。</li>
+<li>会修改函数内部变量的值。</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>闭包是一种特殊的对象。它由两部分构成：函数，以及创建该函数的环境。环境由闭包创建时在作用域中的任何局部变量组成。<br>如果不是因为某些特殊任务而需要闭包，在没有必要的情况下，在其它函数中创建函数是不明智的，因为闭包对脚本性能具有负面影响，包括处理速度和内存消耗。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://baike.baidu.com/link?url=Gz24DLW_-l_Yn4FkNhonNSvQTgsgGNLp3xeDww9Cjbq_YjvtxIOqwAxVx9R8s5z1if2BdDCtP_cJmz20WV91qi6OTxO-C_qcMnLEFzhvu8C" target="_blank" rel="external">百度百科 - 闭包</a><br><a href="https://en.wikipedia.org/wiki/Closure_(computer_programming)" target="_blank" rel="external">Wikipedia - Closure</a><br><a href="http://www.ruanyifeng.com/blog/2009/08/learning_javascript_closures.html" target="_blank" rel="external">学习 Javascript 闭包（Closure）</a><br><a href="https://developer.mozilla.org/cn/docs/Web/JavaScript/Closures" target="_blank" rel="external">MDN - 闭包</a><br><a href="http://www.cnblogs.com/xiaohuochai/p/5730085.html" target="_blank" rel="external">深入理解闭包系列第二篇——从执行环境角度看闭包</a><br><a href="http://www.cnblogs.com/xiaohuochai/p/5731641.html" target="_blank" rel="external">深入理解闭包系列第四篇——常见的一个循环和闭包的错误详解</a><br><a href="http://www.cnblogs.com/wangfupeng1988/p/3994065.html" target="_blank" rel="external">深入理解javascript原型和闭包（15）——闭包</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+  <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+    <div>如果觉得有用，您的支持将鼓励我继续创作！</div>
+    <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+      <span>赏</span>
+    </button>
+    <div id="QR" style="display: none;">
+      
+        <div id="wechat" style="display: inline-block">
+          <img id="wechat_qr" src="/static/wechatpay_reward.jpg" alt="Jovey Zheng WeChat Pay"/>
+          <p>微信打赏</p>
+        </div>
+      
+      
+        <div id="alipay" style="display: inline-block">
+          <img id="alipay_qr" src="/static/alipay_reward.jpg" alt="Jovey Zheng Alipay"/>
+          <p>支付宝打赏</p>
+        </div>
+      
+    </div>
+  </div>
+
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/closure/" rel="tag"># closure</a>
+          
+            <a href="/tags/闭包/" rel="tag"># 闭包</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/03/16/css-cubic-bezier/" rel="next" title="实用的 CSS — 贝塞尔曲线(cubic-bezier)">
+                <i class="fa fa-chevron-left"></i> 实用的 CSS — 贝塞尔曲线(cubic-bezier)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/18/css-animations-performance/" rel="prev" title="实用的 CSS — 动画性能对比">
+                实用的 CSS — 动画性能对比 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/static/avatar.jpg"
+               alt="Jovey Zheng" />
+          <p class="site-author-name" itemprop="name">Jovey Zheng</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">24</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">59</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jovey-zheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/u/1633564683" target="_blank" title="Weibo">
+                  
+                    <i class="fa fa-fw fa-weibo"></i>
+                  
+                  Weibo
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.jianshu.com/users/9de90a2d9205/latest_articles" target="_blank" title="JianShu">
+                  
+                    <i class="fa fa-fw fa-heartbeat"></i>
+                  
+                  JianShu
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#作用域"><span class="nav-number">1.</span> <span class="nav-text">作用域</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#闭包"><span class="nav-number">2.</span> <span class="nav-text">闭包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#其他例子"><span class="nav-number">3.</span> <span class="nav-text">其他例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#弊端"><span class="nav-number">4.</span> <span class="nav-text">弊端</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2015 - 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-leaf"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jovey Zheng</span>
+</div>
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("GtpPev7lLD4ut1VecYz2zOcM-gzGzoHsz", "YvBv69p7tCHqpVqpaX5uo2Fy");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
